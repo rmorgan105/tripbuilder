@@ -1,0 +1,12 @@
+# Create a base Ubuntu image to build upon
+FROM nginx:alpine
+MAINTAINER Richard Morgan <r_morgan@sympatico.ca>
+
+EXPOSE 80
+
+# set terminal variable so that tools such as nano and htop work
+# this is not needed in prod containers, but is useful for devs
+ENV TERM=xterm
+
+RUN rm -rf /etc/nginx/conf.d/
+COPY ./docker/docker-vhost.conf /etc/nginx/conf.d/host.conf

@@ -1,0 +1,46 @@
+version: '2'
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    image: oauth:latest
+    ports:
+    - "9024:22"
+    volumes:
+    - .:/var/www
+    - ./docker/docker-php-fpm.conf:/etc/php5/fpm/pool.d/www.conf
+    links:
+    - redis
+    - db
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
+    image: oauth:nginx
+    ports:
+    - "8080:80"
+    - "9025:22"
+    volumes_from:
+    - app
+    links:
+    - app
+    volumes:
+    - ./docker/docker-vhost.conf:/etc/nginx/sites-enabled/vhost.conf
+
+  redis:
+    image: redis
+    ports:
+    - 6379:6379
+
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: jqbdui1bdb
+      POSTGRES_USER: tripbuilder
+      POSTGRES_DB: tripbuilder
+    ports:
+      - 5432:5432
+
