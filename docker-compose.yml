@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    image: oauth:latest
+    image: tripbuilder:latest
     ports:
     - "9024:22"
     volumes:
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
-    image: oauth:nginx
+    image: tripbuilder:nginx
     ports:
     - "8080:80"
     - "9025:22"
@@ -44,3 +44,11 @@ services:
     ports:
       - 5432:5432
 
+  composer:
+    image: composer/composer:alpine
+    volumes:
+      - .:/app
+      - ~/.ssh:/root/.ssh
+    entrypoint:
+      - composer
+      - install

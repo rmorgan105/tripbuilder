@@ -14,3 +14,6 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->get('/airports', 'AirportController@resourceList');
+$app->get('/airports/{code}', 'AirportController@getAirport');
