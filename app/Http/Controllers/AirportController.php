@@ -45,10 +45,11 @@ class AirportController extends Controller
     public function resourceList(Request $request)
     {
         $client = Client::create();
+        $collection = $client->listAirports($request->input('autocomplete'));
+    
+        //add pagination
         $per_page = $request->input('per_page', 10);
         $page = $request->input('page', 1);
-        
-        $collection = $client->listAirports($request->input('autocomplete'));
         $paginator = new LengthAwarePaginator(
             $collection->forPage($page, $per_page),
             $collection->count(),
@@ -56,8 +57,8 @@ class AirportController extends Controller
             $page
         );
     
-        $airports = new Collection($paginator, new AirportTransformer(), 'airports');
-        $airports->setPaginator(new IlluminatePaginatorAdapter($paginator));
+        $airports = (new Collection($paginator, new AirportTransformer(), 'airports'))
+            ->setPaginator(new IlluminatePaginatorAdapter($paginator));
         
         return $this->JsonApiResponse($airports, 200);
     }

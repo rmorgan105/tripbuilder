@@ -17,3 +17,13 @@ $app->get('/', function () use ($app) {
 
 $app->get('/airports', 'AirportController@resourceList');
 $app->get('/airports/{code}', 'AirportController@getAirport');
+
+$app->get('/trips', 'TripController@listTrips');
+$app->get('/trips/{id}', 'TripController@getTrip');
+
+$app->get('/trips/{id}/flights', 'TripController@addFlight');
+$app->post('/trips/{id}/flights', 'TripController@addFlight');
+
+$app->get('/flights', 'FlightController@listFlights');
+$app->get('/flights/{id}', 'FlightController@getFlight');
+$app->delete('/flights/{id}', 'FlightController@removeFlight');
