@@ -1,0 +1,21 @@
+# Using alpine linux for small image
+# - http://gliderlabs.viewdocs.io/docker-alpine/
+FROM alpine:3.4
+MAINTAINER Richard Morgan <r_morgan@sympatico.ca>
+LABEL version=1.0 \
+    "usage"="docker run --rm --name apidocker -v <source dir>:/src -it apidocker" \
+    "env"="DOCS_DIR, APP_DIR, FILE_FILTER"
+
+ENV DOCS_DIR="build/docs/" \
+ APP_DIR="app/" \
+ FILE_FILTER=".[php]$"
+
+ADD ./docker/entrypoint-apidocs.sh /scripts/entrypoint.sh
+
+# install system packages
+RUN apk --no-cache add \
+  nodejs \
+ && npm install apidoc -g \
+ && chmod +x -R /scripts
+
+ENTRYPOINT /scripts/entrypoint.sh

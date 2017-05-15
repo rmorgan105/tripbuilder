@@ -36,7 +36,7 @@ class TripTransformer extends TransformerAbstract
     }
     
     /**
-     * Include Author
+     * Include Flights
      *
      * @return \League\Fractal\Resource\ResourceAbstract
      */

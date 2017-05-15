@@ -63,11 +63,15 @@ class Client
         return $result;
     }
     
+    /**
+     * @param $code
+     * @return Collection
+     */
     public function getAirport($code)
     {
         $uri = '/api/v6/airports';
         $cacheKey = 'airport.'.$code;
-        $cacheMinutes = 60;
+        $cacheMinutes = 1;
     
         $response = app('cache')->get($cacheKey, function () use ($cacheKey, $cacheMinutes, $uri, $code) {
             try {
@@ -81,7 +85,7 @@ class Client
                 ]);
             
             } catch (\Exception $e) {
-                //todo handle error
+                return new Collection();
             }
         
             $result = $response->getBody()->getContents();

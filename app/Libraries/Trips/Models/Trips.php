@@ -16,4 +16,15 @@ class Trips extends Model
     {
         return $this->belongsToMany(Flights::class, 'trip_flights');
     }
+    
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+        ];
+    }
 }

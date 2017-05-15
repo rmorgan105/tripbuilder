@@ -1,21 +1,29 @@
-# Lumen PHP Framework
+# Trip Builder
+- Richard Morgan <r_morgan@sympatico.ca>
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+Test application based on Laravel Lumen 5.4, running on docker containers.
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## Launch Environment
+The dev environment is docker based. To run the php app, nginx, postgres database, and redis cache containers, simply run docker-compose up
 
-## Official Documentation
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+```bash
+docker-compose up
+```
 
-## Security Vulnerabilities
+This will download the required base images, then build the additional tools into new images, and then launch new containers.
+A container also runs briefly to generate the api docs.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+## Setup database
+Database migrations and seeds are provided for testing the app. These can be run in docker with the following command:
 
-## License
+```bash
+docker-compose exec app php artisan migrate:refresh --seed
+```
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+
+## Api Documentation
+The docker containers expose the api documentation on [http://localhost:8080/docs/](http://localhost:8080/docs/)
+
+
+## 

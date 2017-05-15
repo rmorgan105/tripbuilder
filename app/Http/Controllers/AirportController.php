@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Libraries\IotaCodes\Airport;
 use App\Libraries\IotaCodes\AirportTransformer;
-use App\Libraries\IotaCodes\Client;
+use App\Libraries\IotaCodes\Client as IotaClient;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Manager;
@@ -18,33 +18,27 @@ use League\Fractal\Serializer\JsonApiSerializer;
 
 class AirportController extends Controller
 {
+   
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-    
-    /**
-     * Fetch list of airports
-     *
-     * @api {get} /airports
+     * @api {get} /airports list airports
      * @apiName List Airports
+     * @apiGroup Airports
+     * @apiDescription Fetch list of airports
      *
-     * @apiParam (pagination) {number} [page] page number to display
-     * @apiParam (pagination) {number} [per_page] number of items to display on the page
+     * @apiParam (query param) {number} [page=1] page number to display
+     * @apiParam (query param) {number} [per_page=10] number of items to display on the page
      *
-     * @apiParam (autocomplete) {string} [autocomplete] string to try and autocomplete
+     * @apiParam (query param) {string} [autocomplete] string to try and autocomplete
+     *
+     * @apiExample {curl} example
+     *  curl -i http://localhost:8080/airports?page=1&per_page=10&autocomplete=aar
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function resourceList(Request $request)
     {
-        $client = Client::create();
+        $client = IotaClient::create();
         $collection = $client->listAirports($request->input('autocomplete'));
     
         //add pagination
@@ -64,12 +58,15 @@ class AirportController extends Controller
     }
     
     /**
-     * Get details of an airport by it's code
+     * @api {get} /airports/:code get airport
+     * @apiName Get Airport
+     * @apiGroup Airports
+     * @apiDescription Get details of an airport by it's code
      *
-     * @api {get} /airports/:code
-     * @apiName Get Airport from code
+     * @apiParam (query param) {string} code 3 letter airport code
      *
-     * @apiParam {string} code 3 letter airport code
+     * @apiExample {curl} example
+     *  curl -i http://localhost:8080/airports/YUL
      *
      * @param \Illuminate\Http\Request $request
      * @param $code
@@ -77,27 +74,15 @@ class AirportController extends Controller
      */
     public function getAirport(Request $request, $code)
     {
-        $client = Client::create();
+        $client = IotaClient::create();
+    
+        $airport = $client->getAirport($code);
+        if (is_null($airport)) {
+            return $this->returnErrorMessage('not a valid airport code', 400);
+        }
         
-        $result = $client->getAirport($code);
-        $result = new Item($result, new AirportTransformer(), 'airports');
+        $result = new Item($airport, new AirportTransformer(), 'airports');
     
         return $this->JsonApiResponse($result, 200);
-    }
-    
-    
-    /**
-     * Convert the response to Json
-     *
-     * @param \League\Fractal\Resource\Item $resource
-     * @param $statusCode
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function JsonApiResponse(ResourceInterface $resource, $statusCode)
-    {
-        $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer('http://docker.dev:8080'));
-        
-        return response()->json($manager->createData($resource)->toArray(), $statusCode);
     }
 }
