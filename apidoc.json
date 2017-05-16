@@ -1,8 +1,9 @@
 {
   "name": "Trip Builder",
   "version": "0.1.0",
-  "description": "API for Trip Builder",
-  "title": "... API v1",
+  "author" : "Richard Morgan",
+  "description": "API for Trip Builder, by Richard Morgan",
+  "title": "Trip Builder API v1",
   "url" : "http://localhost:8080",
   "sampleUrl" : "http://localhost:8080"
 }
