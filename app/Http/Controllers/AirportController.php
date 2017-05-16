@@ -38,15 +38,18 @@ class AirportController extends Controller
      */
     public function resourceList(Request $request)
     {
-        $client = IotaClient::create();
-        $collection = $client->listAirports($request->input('autocomplete'));
+        $iotaCodesClient = app('IotaCodesClient');
+        $airportsCollection = $iotaCodesClient->listAirports($request->input('autocomplete'));
+        if (! $airportsCollection) {
+            return $this->returnErrorMessage('failed to fetch airport list from IOTA api', 400);
+        }
     
         //add pagination
         $per_page = $request->input('per_page', 10);
         $page = $request->input('page', 1);
         $paginator = new LengthAwarePaginator(
-            $collection->forPage($page, $per_page),
-            $collection->count(),
+            $airportsCollection->forPage($page, $per_page),
+            $airportsCollection->count(),
             $per_page,
             $page
         );
@@ -74,9 +77,9 @@ class AirportController extends Controller
      */
     public function getAirport(Request $request, $code)
     {
-        $client = IotaClient::create();
+        $iotaCodesClient = app('IotaCodesClient');
     
-        $airport = $client->getAirport($code);
+        $airport = $iotaCodesClient->getAirport($code);
         if (is_null($airport)) {
             return $this->returnErrorMessage('not a valid airport code', 400);
         }

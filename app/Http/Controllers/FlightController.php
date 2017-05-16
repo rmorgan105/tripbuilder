@@ -46,10 +46,8 @@ class FlightController extends Controller
             $page
         );
         
-        $result = (new Collection($paginator, new TripTransformer(), 'trips'))
+        $result = (new Collection($paginator, new FlightTransform(), 'trips'))
             ->setPaginator(new IlluminatePaginatorAdapter($paginator));
-        
-        $result = new Collection($flightCollection, new FlightTransform(), 'flights');
         
         return $this->JsonApiResponse($result, 200);
     }
@@ -98,10 +96,10 @@ class FlightController extends Controller
     {
         /** @var \App\Libraries\Trips\Models\Flights $flight */
         $flight = Flights::find($id);
-        $deleted = $flight->delete();
+        if (! is_null($flight)) {
+            $deleted = $flight->delete();
+        }
 
-        $result = new Item($flight, new FlightTransform(), 'flights');
-        
-        return $this->JsonApiResponse($result, 200);
+        return response()->json(null, 204);
     }
 }

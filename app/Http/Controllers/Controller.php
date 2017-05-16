@@ -19,7 +19,7 @@ class Controller extends BaseController
      */
     protected function JsonApiResponse(ResourceInterface $resource, $statusCode, $includes = '')
     {
-        $manager = new Manager();
+        $manager = app('FractalManager');
         $manager->setSerializer(new JsonApiSerializer('http://docker.dev:8080'));
         $manager->parseIncludes($includes);
         

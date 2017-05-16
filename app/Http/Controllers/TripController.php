@@ -115,7 +115,7 @@ class TripController extends Controller
             return $this->returnErrorMessage('destination not set', 400);
         }
     
-        $client = IotaClient::create();
+        $client = app('IotaCodesClient');
         $airport = $client->getAirport($destination);
         if (is_null($airport)) {
             return $this->returnErrorMessage('destination not a valid airport code', 400);

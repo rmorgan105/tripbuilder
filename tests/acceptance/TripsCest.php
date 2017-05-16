@@ -39,7 +39,7 @@ class TripsCest
         $I->seeResponseIsJson();
 
         $data = json_decode($r);
-        $I->assertCount(1, $data->data, $data);
+        $I->assertCount(1, $data->data, json_encode($data));
     }
     
     public function listTripReturns2ItemWhenPerPageIs2(AcceptanceTester $I)
@@ -56,7 +56,7 @@ class TripsCest
         $I->seeResponseIsJson();
 
         $data = json_decode($r);
-        $I->assertCount(2, $data->data, $data);
+        $I->assertCount(2, $data->data, json_encode($data));
     }
     
     public function getTripReturnsTripJson(AcceptanceTester $I)
@@ -113,5 +113,43 @@ class TripsCest
     
         $data = json_decode($r, true);
         $I->assertCount($nbFlights+1, $data['data']['attributes']['flights']);
+    }
+    
+    public function addFlightReturns400WhenDestinationInvalid(AcceptanceTester $I)
+    {
+        $I->sendGET($this->uri, []);
+        $r = $I->grabResponse();
+        $data = json_decode($r, true);
+        $tripId = $data['data'][0]['id'];
+        $nbFlights = count($data['data'][0]['attributes']['flights']);
+        
+        $params = [
+            'destination' => 'BlueFin'
+        ];
+        $uri = $this->uri . '/' . $tripId .'/flights';
+        
+        $I->sendPost($uri, $params);
+        $r = $I->grabResponse();
+        
+        $I->seeResponseCodeIs(400, $r);
+        $I->seeResponseIsJson();
+    }
+    
+    public function addFlightReturns400WhenDestinationNotSet(AcceptanceTester $I)
+    {
+        $I->sendGET($this->uri, []);
+        $r = $I->grabResponse();
+        $data = json_decode($r, true);
+        $tripId = $data['data'][0]['id'];
+        $nbFlights = count($data['data'][0]['attributes']['flights']);
+        
+        $params = [];
+        $uri = $this->uri . '/' . $tripId .'/flights';
+        
+        $I->sendPost($uri, $params);
+        $r = $I->grabResponse();
+        
+        $I->seeResponseCodeIs(400, $r);
+        $I->seeResponseIsJson();
     }
 }

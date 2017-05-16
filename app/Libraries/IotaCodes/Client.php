@@ -22,6 +22,11 @@ class Client
         $this->guzzle = $guzzle;
     }
     
+    /**
+     * Factory Method
+     *
+     * @return \App\Libraries\IotaCodes\Client
+     */
     public static function create()
     {
         return new self(new Guzzle([
@@ -31,6 +36,12 @@ class Client
         ]));
     }
     
+    /**
+     * Get list of airports
+     *
+     * @param string $autoComplete
+     * @return \Illuminate\Support\Collection|false
+     */
     public function listAirports($autoComplete = '')
     {
         $uri = '/api/v6/airports';
@@ -48,14 +59,20 @@ class Client
                 ]);
     
             } catch (\Exception $e) {
-                //todo handle error
+                return false;
             }
             
             $result = $response->getBody()->getContents();
+            if (empty($result)) {
+                return false;
+            }
             app('cache')->put($key, $result, $minutes);
             return $result;
         });
         
+        if(! $response) {
+            return false;
+        }
         $result = $this->toAirportCollection($response);
         if ($autoComplete != '') {
             $result = $this->autoCompleteMap($result, $autoComplete);
@@ -71,7 +88,7 @@ class Client
     {
         $uri = '/api/v6/airports';
         $cacheKey = 'airport.'.$code;
-        $cacheMinutes = 1;
+        $cacheMinutes = 60;
     
         $response = app('cache')->get($cacheKey, function () use ($cacheKey, $cacheMinutes, $uri, $code) {
             try {
@@ -103,6 +120,9 @@ class Client
     private function toAirportCollection($json)
     {
         $data = json_decode($json);
+        if (! $data) {
+            return new Collection();
+        }
         $result = (new Collection($data->response))
             ->sortBy('name')
             ->map(function ($item, $key) {
@@ -112,6 +132,11 @@ class Client
         return $result;
     }
     
+    /**
+     * @param \Illuminate\Support\Collection $collection
+     * @param $autoComplete
+     * @return Collection
+     */
     private function autoCompleteMap(Collection $collection, $autoComplete)
     {
         return $collection->filter(function ($value, $key) use ($autoComplete) {

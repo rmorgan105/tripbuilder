@@ -5,6 +5,12 @@ use League\Fractal\TransformerAbstract;
 
 class AirportTransformer extends TransformerAbstract
 {
+    /**
+     * Fractal Transformer for Airport Resource
+     *
+     * @param \App\Libraries\IotaCodes\Airport $airport
+     * @return array
+     */
     public function transform(Airport $airport)
     {
         return [
