@@ -46,6 +46,7 @@ class AirportController extends Controller
     
         //add pagination
         $per_page = $request->input('per_page', 10);
+        $per_page = (empty($per_page)) ? 10 : $per_page;
         $page = $request->input('page', 1);
         $paginator = new LengthAwarePaginator(
             $airportsCollection->forPage($page, $per_page),

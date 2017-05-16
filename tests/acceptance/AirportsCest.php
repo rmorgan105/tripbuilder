@@ -59,6 +59,20 @@ class AirportsCest
         $I->assertCount(2, $data->data, json_encode($data));
     }
     
+    public function listAirportsDoesNotReturn500WhenPerPageIsInvalid(AcceptanceTester $I)
+    {
+        $params = [
+            'page' => 1,
+            'per_page' => ''
+        ];
+        
+        $I->sendGET($this->uri, $params);
+        $r = $I->grabResponse();
+        
+        $I->seeResponseCodeIs(200, $r);
+        $I->seeResponseIsJson();
+    }
+    
     public function getAirportReturnsTripJson(AcceptanceTester $I)
     {
         $I->sendGET($this->uri, []);

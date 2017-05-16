@@ -34,7 +34,7 @@ class TripController extends Controller
      * @apiDescription This api returns a paginated list of trips found
      *
      * @apiParam (query params) {number} [page=1] page to fetch
-     * @apiParam (query param) {number} [per_page=10] number of results to fetch per page
+     * @apiParam (query params) {number} [per_page=10] number of results to fetch per page
      *
      * @apiExample {curl} example
      *  curl -i http://localhost:8080/trips?page=1&per_page=10
@@ -48,6 +48,7 @@ class TripController extends Controller
         
         //add pagination
         $per_page = $request->input('per_page', 10);
+        $per_page = (empty($per_page)) ? 10 : $per_page;
         $page = $request->input('page', 1);
         $paginator = new LengthAwarePaginator(
             $tripsCollection->forPage($page, $per_page),
@@ -96,8 +97,8 @@ class TripController extends Controller
      * @apiGroup Trips
      * @apiDescription send a destination to this endpoint to add a flight to the trip
      *
-     * @apiParam (form data) {string} destination the destination of the new flight
-     * @apiParam (url) {number} id the id of the trip to fetch
+     * @apiParam {string} destination the destination of the new flight
+     * @apiParam {number} id the id of the trip to fetch
      *
      * @apiExample {curl} example
      *  curl -i http://localhost:8080/trips/1/flights

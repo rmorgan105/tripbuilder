@@ -24,7 +24,7 @@ class FlightController extends Controller
      * @apiDescription List all defined flights
      *
      * @apiParam (query params) {number} [page=1] page to fetch
-     * @apiParam (query param) {number} [per_page=10] number of results to fetch per page
+     * @apiParam (query params) {number} [per_page=10] number of results to fetch per page
      *
      * @apiExample {curl} example
      *  curl -i http://localhost:8080/flights?page=1&per_page=10
@@ -38,6 +38,7 @@ class FlightController extends Controller
         
         //add pagination
         $per_page = $request->input('per_page', 10);
+        $per_page = (empty($per_page)) ? 10 : $per_page;
         $page = $request->input('page', 1);
         $paginator = new LengthAwarePaginator(
             $flightCollection->forPage($page, $per_page),
@@ -100,6 +101,6 @@ class FlightController extends Controller
             $deleted = $flight->delete();
         }
 
-        return response()->json(null, 204);
+        return response()->json(['message' => "flight $id has been removed"], 200);
     }
 }

@@ -59,6 +59,20 @@ class FlightsCest
         $I->assertCount(2, $data->data, json_encode($data));
     }
     
+    public function listFlightsDoesNotReturn500WhenPerPageIsInvalid(AcceptanceTester $I)
+    {
+        $params = [
+            'page' => 1,
+            'per_page' => ''
+        ];
+        
+        $I->sendGET($this->uri, $params);
+        $r = $I->grabResponse();
+        
+        $I->seeResponseCodeIs(200, $r);
+        $I->seeResponseIsJson();
+    }
+    
     public function listFlightsReturns0ItemWhenPageIsBeyondEndOfCollection(AcceptanceTester $I)
     {
         $params = [
