@@ -26,6 +26,12 @@ fetch third party packages.
 ```bash
 docker-compose up composer install
 ```
+### Setup .env file
+Copy the .env.example to a new file called .env
+```bash
+cp .env.example .env
+```
+
 
 ### Setup database
 Before testing the app, you will need to prepare the database.
