@@ -35,7 +35,7 @@ class FlightController extends Controller
     public function listFlights(Request $request)
     {
         $flightCollection = Flights::all();
-        
+
         //add pagination
         $per_page = $request->input('per_page', 10);
         $per_page = (empty($per_page)) ? 10 : $per_page;
@@ -46,13 +46,13 @@ class FlightController extends Controller
             $per_page,
             $page
         );
-        
+
         $result = (new Collection($paginator, new FlightTransform(), 'trips'))
             ->setPaginator(new IlluminatePaginatorAdapter($paginator));
-        
+
         return $this->JsonApiResponse($result, 200);
     }
-    
+
     /**
      * @api {get} /flights/:id get flight
      * @apiName Get Flight
@@ -71,16 +71,16 @@ class FlightController extends Controller
     public function getFlight(Request $request, $id)
     {
         $flight = Flights::find($id);
-        
+
         if (! $flight) {
             return $this->returnErrorMessage("flight id $id not found", 400);
         }
-        
+
         $result = new Item($flight, new FlightTransform(), 'flights');
-        
+
         return $this->JsonApiResponse($result, 200);
     }
-    
+
     /**
      * @api {delete} /flights/:id delete a flight
      * @apiName Delete a Flight
@@ -101,6 +101,6 @@ class FlightController extends Controller
             $deleted = $flight->delete();
         }
 
-        return response()->json(['message' => "flight $id has been removed"], 200);
+        return response()->json('', 204);
     }
 }
